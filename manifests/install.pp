@@ -17,7 +17,9 @@ class alkivi_base::install () {
     'usbutils',
     'htop',
     'multitail',
-    'kexec-tools'
+    'kexec-tools',
+    'tzdata',
+    'coreutils',
   ]
 
   package { $alkivi_base_packages: }

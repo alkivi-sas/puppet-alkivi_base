@@ -127,5 +127,23 @@ class alkivi_base::config () {
     require => File['/root/.alkivi-conf'],
   }
 
+  # Some alternative
+  alternatives { 'editor':
+    path => '/usr/bin/vim.basic'
+  }
 
+  # Tzdata
+  file { "/etc/localtime":
+    require => Package["tzdata"],
+    source  => "file://${alkivi_base::localtime_file}",
+  }
+
+  # Locales
+  class { locales:
+      default_value => "en_US.UTF-8",
+      available     => ["en_US.UTF-8 UTF-8" ],
+  }
+
+  # Console data
+  class { console_data: }
 }
