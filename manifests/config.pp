@@ -146,4 +146,9 @@ class alkivi_base::config () {
 
   # Console data
   class { console_data: }
+
+  # NTP ntp.ovh.net
+  class { '::ntp':
+      servers  => $alkivi_base::ntp_servers,
+  }
 }
