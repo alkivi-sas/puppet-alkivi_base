@@ -134,19 +134,9 @@ class alkivi_base::config () {
 
   # Tzdata
   file { "/etc/localtime":
-    ensure  => link,
     require => Package["tzdata"],
     source  => "file://${alkivi_base::localtime_file}",
   }
-
-  exec { 'reconfigure_tzdata':
-    command  => 'dpkg-reconfigure -f noninteractive tzdata && touch /etc/localtime.updated',
-    provider => 'shell',
-    creates  => '/etc/localtime.updated',
-    path     => ['/bin', '/sbin', '/usr/bin', '/root/alkivi-scripts/', '/usr/sbin/'],
-    require  => File['/etc/localtime'],
-  }
-
 
   # Locales
   class { locales:
@@ -161,4 +151,33 @@ class alkivi_base::config () {
   class { '::ntp':
       servers  => $alkivi_base::ntp_servers,
   }
+
+  # Use custom motd in profile.d ... allow more dynamic stuff
+  # Motd symlink and repertory
+  #
+  file { '/etc/motd':
+    ensure => absent,
+  }
+
+  file { '/var/run/motd.dynamic':
+    ensure => absent,
+  }
+
+  file { '/etc/update-motd.d':
+    ensure => directory,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+    source  => 'puppet:///modules/alkivi_base/motd',
+    recurse => true,
+  }
+
+  file { '/etc/profile.d/display_motd.sh':
+    ensure => file,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+    source  => 'puppet:///modules/alkivi_base/display_motd.sh',
+  }
+
 }

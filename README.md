@@ -5,6 +5,7 @@ It include :
 - ssh keys 
 - default software
 - provide hability to quickly create password and credentials for our api
+- remove default motd and add an executble in /etc/profile.d to allow dynamic motd
 
 ## Usage
 
