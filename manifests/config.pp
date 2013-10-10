@@ -134,9 +134,19 @@ class alkivi_base::config () {
 
   # Tzdata
   file { "/etc/localtime":
+    ensure  => link,
     require => Package["tzdata"],
     source  => "file://${alkivi_base::localtime_file}",
   }
+
+  exec { 'reconfigure_tzdata':
+    command  => 'dpkg-reconfigure -f noninteractive tzdata && touch /etc/localtime.updated',
+    provider => 'shell',
+    creates  => '/etc/localtime.updated',
+    path     => ['/bin', '/sbin', '/usr/bin', '/root/alkivi-scripts/', '/usr/sbin/'],
+    require  => File['/etc/localtime'],
+  }
+
 
   # Locales
   class { locales:
