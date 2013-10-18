@@ -1,5 +1,5 @@
 name    'alkivi-alkivi_base'
-version '0.0.5'
+version '0.0.6'
 source 'https://github.com/alkivi-sas/puppet-alkivi_base'
 author 'alkivi'
 license 'LGPLv3'

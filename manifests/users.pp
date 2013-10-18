@@ -11,6 +11,14 @@ class alkivi_base::users () {
     gid    => 1000,
   }
 
+  # Define and store password
+  $alkivi_password = alkivi_password('alkivi', 'user')
+  $root_password = alkivi_password('alkivi', 'user')
+
+  alkivi_base::passwd{ 'alkivi': }
+  alkivi_base::passwd{ 'root': }
+
+  # Create users
   user { 'alkivi':
     ensure     => present,
     comment    => 'Alkivi Default User',
@@ -18,17 +26,16 @@ class alkivi_base::users () {
     gid        => 1000,
     home       => '/home/alkivi',
     managehome => true,
+    password   => sha1($alkivi_password),
+    shell      => '/bin/bash',
   }
 
-  exec { 'passwd-alkivi':
-    command => 'setpwd --name alkivi',
-    creates => '/root/.passwd/alkivi',
-    require => [ User['alkivi'], File['/root/alkivi-scripts/setpwd'], ],
-  }
-
-  exec { 'passwd-root':
-    command => 'setpwd --name root',
-    creates => '/root/.passwd/root',
-    require => File['/root/alkivi-scripts/setpwd'],
+  user { 'root':
+    ensure   => present,
+    uid      => 0,
+    gid      => 0,
+    password => sha1($root_password),
+    home     => '/root',
+    shell    => '/bin/bash',
   }
 }

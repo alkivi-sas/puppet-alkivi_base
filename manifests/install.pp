@@ -20,6 +20,7 @@ class alkivi_base::install () {
     'kexec-tools',
     'tzdata',
     'coreutils',
+    'python-pip',
   ]
 
   package { $alkivi_base_packages: }
