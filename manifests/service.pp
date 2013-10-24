@@ -6,7 +6,7 @@ class alkivi_base::service () {
   service { 'alkivi-iptables':
     hasrestart => true,
     hasstatus  => false,
-    status     => 'iptables -L',
+    status     => 'iptables -L -n',
     restart    => '/etc/init.d/alkivi-iptables restart',
   }
 }

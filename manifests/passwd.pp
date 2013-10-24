@@ -1,6 +1,7 @@
 define alkivi_base::passwd (
-  $file = $title,
-  $type = 'user'
+  $file   = $title,
+  $type   = 'user',
+  $length = 15,
 ) {
 
   validate_string($type)
@@ -8,35 +9,29 @@ define alkivi_base::passwd (
   # declare root dir
   if ($type == 'user')
   {
-    $rootDir   = '/root/.passwd'
-  }
-  elsif($type == 'db')
-  {
-    $rootDir   = '/root/.passwd/db'
-  }
-  elsif($type == 'hosts')
-  {
-    $rootDir   = '/root/.passwd/hosts'
+    $rootDir = '/root/.passwd'
   }
   elsif($type == 'backup')
   {
-    $rootDir   = '/root/.passwd/alkivi-backup'
-  }
-  elsif($type == 'ups')
-  {
-    $rootDir   = '/root/.passwd/ups'
-  }
-  elsif($type == 'ldap')
-  {
-    $rootDir   = '/root/.passwd/ldap'
+    $rootDir = '/root/.passwd/alkivi-backup'
   }
   else
   {
-    fail('Param type is not correct, must be user, db or hosts')
+    $rootDir = "/root/.passwd/${type}"
   }
 
   # First generate password on the puppet master, to be able to reuse it other applications
-  $password = alkivi_password($file,$type)
+  $password = alkivi_password($file,$type,$length)
+
+  if(!defined(File[$rootDir]))
+  {
+    file { $rootDir:
+      ensure => directory,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0700',
+    }
+  }
 
   # Then apply file
   file { "${rootDir}/${file}":
