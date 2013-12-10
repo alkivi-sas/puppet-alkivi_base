@@ -34,12 +34,15 @@ define alkivi_base::passwd (
   }
 
   # Then apply file
-  file { "${rootDir}/${file}":
-    ensure  => present,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0400',
-    content => "${password}\n",
+  if(!defined(File["${rootDir}/${file}"]))
+  {
+    file { "${rootDir}/${file}":
+      ensure  => present,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0400',
+      content => "${password}\n",
+    }
   }
 
   #exec { "genpwd --save ${title} --savedir ${rootDir}":

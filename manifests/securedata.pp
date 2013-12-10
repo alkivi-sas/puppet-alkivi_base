@@ -4,6 +4,8 @@ define alkivi_base::securedata (
   $host              = undef,
   $user              = undef,
   $dbname            = undef,
+  $dbport            = undef,
+  $dbtype            = undef,
   $applicationKey    = undef,
   $applicationSecret = undef,
   $consumerKey       = undef,
@@ -18,8 +20,15 @@ define alkivi_base::securedata (
     validate_string($user)
     validate_string($host)
     validate_string($dbname)
+    if(!is_integer($dbport))
+    {
+      fail("Dbport is not an integer")
+    }
+
+    validate_re($dbtype, [ '^mysql$', '^postgres$' ])
+
     $rootDir = '/alkivi/.secureData/sql'
-    $command = "gensecuredata --type ${type} --save ${file} --savedir ${rootDir} --host ${host} --user ${user} --dbname ${dbname}"
+    $command = "gensecuredata --type ${type} --save ${file} --savedir ${rootDir} --host ${host} --user ${user} --dbname ${dbname} --dbport ${dbport} --dbtype ${dbtype}"
 
   }
   elsif($type == 'api_ovh')

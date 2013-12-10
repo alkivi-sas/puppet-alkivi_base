@@ -17,7 +17,8 @@ help()
     --user
     --dbname
     --password
-    TODO : port ?
+    --dbport
+    --dbtype
     
     api_ovh related
     --applicationKey
@@ -68,6 +69,14 @@ while [ "$#" -gt 0 ] ; do
             DBNAME=$2
             shift    
             ;;
+        --dbtype)
+            DBTYPE=$2
+            shift    
+            ;;
+        --dbport)
+            DBPORT=$2
+            shift    
+            ;;
         --applicationKey)
             AK=$2
             shift    
@@ -102,7 +111,7 @@ if [ $TYPE == 'sql' ]; then
         # TODO : use genpwd 
         PASSWORD=`cat /root/.passwd/db/$USER`
     fi
-    echo "$HOST:$USER:$DBNAME:$PASSWORD" > $ROOTDIR/$NAME
+    echo "$DBTYPE:$HOST:$DBPORT:$USER:$DBNAME:$PASSWORD" > $ROOTDIR/$NAME
     chmod 440 $ROOTDIR/$NAME
 elif [ $TYPE == 'api_ovh' ]; then
     echo "$AK:$AS:$CK" > $ROOTDIR/$NAME
