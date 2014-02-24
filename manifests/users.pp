@@ -13,7 +13,7 @@ class alkivi_base::users () {
 
   # Define and store password
   $alkivi_password = alkivi_password('alkivi', 'user')
-  $root_password = alkivi_password('alkivi', 'user')
+  $root_password = alkivi_password('root', 'user')
 
   alkivi_base::passwd{ 'alkivi': }
   alkivi_base::passwd{ 'root': }

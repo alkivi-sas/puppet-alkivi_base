@@ -21,6 +21,8 @@ class alkivi_base::install () {
     'tzdata',
     'coreutils',
     'python-pip',
+    'locate',
+    'smbclient',
   ]
 
   package { $alkivi_base_packages: }

@@ -3,7 +3,12 @@ class alkivi_base (
   $root_extra_ssh_keys   = [],
   $localtime_file        = '/usr/share/zoneinfo/posix/Europe/Paris',
   $ntp_servers           = ['ntp.ovh.net'],
+  $default_locale        = 'en_US.UTF-8',
+  $available_locales     = ["en_US.UTF-8 UTF-8" ],
 ) {
+
+  validate_array($available_locales)
+  validate_array($ntp_servers)
 
 
 

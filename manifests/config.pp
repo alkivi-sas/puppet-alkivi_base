@@ -140,8 +140,8 @@ class alkivi_base::config () {
 
   # Locales
   class { locales:
-      default_value => "en_US.UTF-8",
-      available     => ["en_US.UTF-8 UTF-8" ],
+      default_value => $alkivi_base::default_locale,
+      available     => $alkivi_base::available_locales,
   }
 
   # Console data
