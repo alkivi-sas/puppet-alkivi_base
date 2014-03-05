@@ -26,7 +26,7 @@ class alkivi_base::users () {
     gid        => 1000,
     home       => '/home/alkivi',
     managehome => true,
-    password   => sha1($alkivi_password),
+    password   => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${alkivi_password} | tr -d '\n'"),
     shell      => '/bin/bash',
   }
 
@@ -34,7 +34,7 @@ class alkivi_base::users () {
     ensure   => present,
     uid      => 0,
     gid      => 0,
-    password => sha1($root_password),
+    password => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${root_password} | tr -d '\n'"),
     home     => '/root',
     shell    => '/bin/bash',
   }
