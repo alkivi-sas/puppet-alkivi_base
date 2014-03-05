@@ -1,6 +1,8 @@
 define alkivi_base::firewall_rule (
   $source_port = undef,
   $dest_port   = undef,
+  $source      = undef,
+  $dest        = undef,
   $comment     = $title,
   $priority    = 80,
   $table       = 'filter',
