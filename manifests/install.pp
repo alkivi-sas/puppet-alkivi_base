@@ -5,6 +5,7 @@ class alkivi_base::install () {
 
   $alkivi_base_packages = [
     'alkivi-iptables',
+    'mosh',
     'exuberant-ctags',
     'git',
     'zip',
