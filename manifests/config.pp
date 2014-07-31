@@ -12,6 +12,16 @@ class alkivi_base::config () {
     mode   => '0751',
   }
 
+  # bash helpers
+  file { '/etc/alkivi.conf.d/bash-helpers':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    source  => 'puppet:///modules/alkivi_base/scripts-helpers/bash/helpers',
+    require => [ File['/etc/alkivi.conf.d/'], ],
+  }
+
   # alkivi keys for root
   file {  '/root/.ssh/authorized_keys':
     ensure  => present,

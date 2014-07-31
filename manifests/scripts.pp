@@ -12,7 +12,7 @@ class alkivi_base::scripts () {
 
   # script to generate password
   file { '/root/alkivi-scripts/genpwd':
-    source  => 'puppet:///modules/alkivi_base/genpwd',
+    source  => 'puppet:///modules/alkivi_base/scripts-helpers/genpwd',
     require => File['/root/alkivi-scripts/'],
   }
 
@@ -25,7 +25,7 @@ class alkivi_base::scripts () {
 
   # script to set password
   file { '/root/alkivi-scripts/setpwd':
-    source  => 'puppet:///modules/alkivi_base/setpwd',
+    source  => 'puppet:///modules/alkivi_base/scripts-helpers/setpwd',
     require => File['/root/alkivi-scripts/'],
   }
 
@@ -37,7 +37,7 @@ class alkivi_base::scripts () {
 
   # script to generate securedata files
   file { '/root/alkivi-scripts/gensecuredata':
-    source  => 'puppet:///modules/alkivi_base/gensecuredata',
+    source  => 'puppet:///modules/alkivi_base/scripts-helpers/gensecuredata',
     require => File['/root/alkivi-scripts/'],
   }
 
