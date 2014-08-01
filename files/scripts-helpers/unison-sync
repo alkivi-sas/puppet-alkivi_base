@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Stop as soon as an error is detect
+set -e
+
+LOCK_FILE='/tmp/unison.lock'
+PROFIL='alkivi'
+
+if [ -e $LOCK_FILE ]; then
+    echo "Unison already running, exiting"
+    exit 0
+fi
+
+touch $LOCK_FILE
+unison -silent $PROFIL
+rm $LOCK_FILE
+
+exit 0

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+ldapadd -x -D cn=admin,dc=ores -w `cat /root/.passwd/ldap/admin` -f $@

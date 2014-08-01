@@ -1,0 +1,102 @@
+#!/bin/sh
+
+set -e
+
+#
+#   Display help
+#
+help()
+{
+cat <<EOF
+$PROGNAME : [OPTIONS]
+Restore ERP database on host dev.alkivi.fr
+  --date    date you want   Specify date to restore ? (try to look in /root/backup-pgsql/)
+  --help                    Print this
+
+EOF
+}
+
+# Parse command line
+while [ "$#" -gt 0 ] ; do
+    case $1 in
+        --help)
+            help
+            exit 0
+            ;;
+        --date)
+			DATE=$2
+            shift
+			if [ -z "$DATE" ]; then
+				echo "You must specify a date when using --date"
+				exit 1
+			fi
+			;;
+		*)
+            echo "Unknown option '$1'"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$DATE" ]; then
+    DATE='newest'
+fi
+
+PORT=2202
+SOURCEDIR=/home/backup-pgsql/daily/openerp
+LOGIN=root
+DEST=dev.alkivi.fr
+DESTDIR=/var/lib/postgresql
+DESTFILE_GZ=latest-db.gz
+DESTFILE=latest-db
+
+SCP_BASE="scp -P $PORT"
+SSH_BASE="ssh -p $PORT $LOGIN@$DEST"
+
+# Find good file to scp
+if [ "$DATE" = 'newest' ]; then
+    echo "Fetching newest file"
+    FILE=`ls -t1 $SOURCEDIR | head -n1`
+else
+    echo "Fetching file for date $DATE"
+    set +e
+    FILE=`ls -t1 $SOURCEDIR | grep $DATE`
+    set -e
+fi
+
+if [ -z "$FILE" ]; then
+    echo "No file detected, abording"
+    exit 1
+else
+    echo "File is $FILE"
+fi
+
+# scp to /var/lib/postgresql/latest-db.gz
+echo "SCP file"
+$SCP_BASE $SOURCEDIR/$FILE $LOGIN@$DEST:$DESTDIR/$DESTFILE_GZ
+
+# Gunzip
+echo "Gunziping"
+$SSH_BASE "gunzip -f $DESTDIR/$DESTFILE_GZ"
+
+# Fix permission
+echo "Fixing permission"
+$SSH_BASE "chown postgres $DESTDIR/$DESTFILE"
+
+# Stop openerp
+echo "Stopping openerp"
+$SSH_BASE "/etc/init.d/openerp stop"
+
+# psql data back : erase old database, create new, put data back
+echo "Restoring data"
+$SSH_BASE "su - postgres -c 'dropdb openerp'"
+#$SSH_BASE "su - postgres -c 'createdb -O openerp openerp'"
+$SSH_BASE "su - postgres -c 'psql' < $DESTDIR/$DESTFILE"
+
+# Apply modification to avoid imap checking of email on both prod and dev
+$SSH_BASE "su - postgres -c 'psql -c \"DELETE FROM fetchmail_server;\" openerp'"
+
+# Start openerp
+echo "Start openerp"
+$SSH_BASE "/etc/init.d/openerp start"
