@@ -1,4 +1,7 @@
-class alkivi_base::config () {
+class alkivi_base::config (
+  $alkivi_extra_ssh_keys = $alkivi_base::alkivi_extra_ssh_keys,
+  $root_extra_ssh_keys   = $alkivi_base::root_extra_ssh_keys,
+) {
   # make sur ssh directory is here
   file {  '/root/.ssh/':
     ensure  => directory,
