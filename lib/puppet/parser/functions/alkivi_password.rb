@@ -27,8 +27,8 @@ module Puppet::Parser::Functions
         dir = "/root/.passwd/#{fqdn}/#{type}"
       end
 
-      # Generate password
-      password = `/usr/bin/sudo /root/alkivi-scripts/genpwd --save #{name} --savedir #{dir} --print --length #{length}`
+      # Generate password remove newline if present
+      password = `/usr/bin/sudo /root/alkivi-scripts/genpwd --save #{name} --savedir #{dir} --print --length #{length}`.tr("\n","")
       unless $?.success?
         raise "Password generation failed"
       end
