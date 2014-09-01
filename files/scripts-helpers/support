@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+
+# Various tools for bash
+source /etc/alkivi.conf.d/bash-helpers
+
+USER='root'
+HOST=$1
+PORT=22
+
+# Fetch password
+PASS_FILE="/root/.passwd/hosts/$HOST"
+if [ ! -e $PASS_FILE ];
+then
+    error "File $PASS_FILE does not exist"
+    exit 1
+fi
+
+PASSWORD=`cat /root/.passwd/hosts/$HOST`
+SSH_BASE="ssh -p $PORT $USER@$HOST"
+
+# Print password
+log "Password for alkivi is : $PASSWORD"
+ok ""
+
+# Test ssh port
+log "Testing if we can ssh $HOST on port $PORT"
+nc -z $HOST $PORT
+ok ""
+
+log "Updating password for alkivi to 'alkivi'"
+(
+$SSH_BASE passwd alkivi  <<EOF
+alkivi
+alkivi
+EOF
+) > /dev/null 2>&1
+ok
+
+log "Press enter when support is done"
+read
+
+log "Restoring password for alkivi"
+(
+$SSH_BASE passwd alkivi  <<EOF
+$PASSWORD
+$PASSWORD
+EOF
+) > /dev/null 2>&1
+ok
