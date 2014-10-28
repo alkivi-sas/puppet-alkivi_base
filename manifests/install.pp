@@ -7,6 +7,7 @@ class alkivi_base::install () {
     'alkivi-iptables',
     'mosh',
     'exuberant-ctags',
+    'curl',
     'git',
     'zip',
     'sharutils',
@@ -23,7 +24,8 @@ class alkivi_base::install () {
     'coreutils',
     'python-pip',
     'locate',
-    'smbclient',
+    'screen',
+    'debconf-utils'
   ]
 
   package { $alkivi_base_packages: }

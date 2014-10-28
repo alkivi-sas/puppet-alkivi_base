@@ -8,7 +8,7 @@ class alkivi_base::users () {
   # default group & users
   group { 'alkivi':
     ensure => present,
-    gid    => 1000,
+    gid    => 1200,
   }
 
   # Define and store password
@@ -22,8 +22,8 @@ class alkivi_base::users () {
   user { 'alkivi':
     ensure     => present,
     comment    => 'Alkivi Default User',
-    uid        => 1000,
-    gid        => 1000,
+    uid        => 1200,
+    gid        => 1200,
     home       => '/home/alkivi',
     managehome => true,
     password   => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${alkivi_password} | tr -d '\n'"),
