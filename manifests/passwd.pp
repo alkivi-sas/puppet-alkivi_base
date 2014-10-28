@@ -44,12 +44,5 @@ define alkivi_base::passwd (
       content => "${password}\n",
     }
   }
-
-  #exec { "genpwd --save ${title} --savedir ${rootDir}":
-  #  cwd     => '/root',
-  #  creates => "${rootDir}/${title}",
-  #  path    => ['/usr/bin', '/bin', '/usr/sbin', '/root/alkivi-scripts'],
-  #  require => File['/root/alkivi-scripts/genpwd'],
-  #}
 }
 

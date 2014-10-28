@@ -48,8 +48,8 @@ define alkivi_base::securedata (
     command => $command,
     cwd     => '/root',
     creates => "${rootDir}/${file}",
-    path    => ['/usr/bin', '/bin', '/usr/sbin', '/root/alkivi-scripts'],
-    require => File['/root/alkivi-scripts/gensecuredata'],
+    path    => ['/usr/bin', '/bin', '/usr/sbin'],
+    require => File['/usr/bin/gensecuredata'],
   }
 }
 
