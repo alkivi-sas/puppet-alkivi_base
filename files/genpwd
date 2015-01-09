@@ -11,6 +11,8 @@ help()
     --save            Set the filename
     --savedir         Set the path where to store password (default /root/.passwd)
     --print           Print the password to stdout (puppet use that) 
+    --hash            Print the password hash to stdout (puppet use that) 
+    --force           Regenerate password
 
 EOF
 }
@@ -26,6 +28,8 @@ fi
 ROOTDIR=/root/.passwd
 PRINT=0
 LENGTH=15
+HASH=0
+FORCE=0
 
 # Parse command line
 while [ "$#" -gt 0 ] ; do
@@ -45,6 +49,12 @@ while [ "$#" -gt 0 ] ; do
         --print)
             PRINT=1
             ;;
+        --hash)
+            HASH=1
+            ;;
+        --force)
+            FORCE=1
+            ;;
         --length)
             LENGTH=$2
             shift
@@ -57,7 +67,6 @@ while [ "$#" -gt 0 ] ; do
     shift
 done
 
-PASSWORD=`< /dev/urandom tr -dc A-Za-z0-9 | head -c\${1:-$LENGTH};echo;`
 
 
 # No name, print directly
@@ -67,29 +76,48 @@ if [ -z "$NAME" ]; then
 fi
 
 PASSWORD_FILE="$ROOTDIR/$NAME"
+HASH_FILE="$ROOTDIR/.hash_$NAME"
 
-# Insure rootdir is present 
-mkdir -p $ROOTDIR
-chmod 700 $ROOTDIR
-
-if [ -f $PASSWORD_FILE ]; then
-    if [ $PRINT -eq 0 ]; then
-        echo "Password $NAME already exists"
-        exit 2
-    else
-        echo -n `cat $PASSWORD_FILE`
-        exit 0
-    fi
+# Ensure rootdir is present 
+if [ ! -d "$ROOTDIR" ]; then
+    mkdir -p $ROOTDIR
+    chmod 700 $ROOTDIR
 fi
 
-touch $PASSWORD_FILE
-echo $PASSWORD > $PASSWORD_FILE
-chmod 600 $PASSWORD_FILE
+
+# Generate password file if needed
+# Force or not existent
+if [ $FORCE -eq 1 -o ! -f "$PASSWORD_FILE" ]; then
+    PASSWORD=`< /dev/urandom tr -dc abcdefghkmnoprstwxzABCDEFGHJKLMNPQRTWXY23456789 | head -c\${1:-$LENGTH};echo;`
+    echo $PASSWORD > $PASSWORD_FILE
+    chmod 600 $PASSWORD_FILE
+else
+    PASSWORD=`cat $PASSWORD_FILE`
+fi
+
+# Generate hash file if needed
+# Force or not existent
+if [ $FORCE -eq 1 -o ! -f "$HASH_FILE" ]; then
+    REALHASH=`mkpasswd -m sha-512 $PASSWORD`
+    echo $REALHASH > $HASH_FILE
+    chmod 600 $HASH_FILE
+else
+    REALHASH=`cat $HASH_FILE`
+fi
 
 if [ $PRINT -eq 0 ]; then
-    echo "Password $NAME successfully generated in $PASSWORD_FILE"
+    if [ $HASH -eq 1 ]; then
+        echo "Password hash generated in $HASH_FILE"
+    else
+        echo "Password generated in $PASSWORD_FILE"
+    fi
+    exit 2
 else
-    echo $PASSWORD
+    if [ $HASH -eq 1 ]; then
+        echo -n `cat $HASH_FILE`
+    else
+        echo -n  `cat $PASSWORD_FILE`
+    fi
+    exit 0
 fi
-exit 0
 
